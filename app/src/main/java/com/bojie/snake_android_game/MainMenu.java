@@ -113,8 +113,8 @@ public class MainMenu extends AppCompatActivity {
 
 
     private void initBomb() {
-        mBombBtn = (ImageView) findViewById(R.id.gamecenter);
-        mCompileAnim = AnimationUtils.loadAnimation(MainMenu.this, R.anim.anim_for_gamecenter_button);
+        mBombBtn = (ImageView) findViewById(R.id.bomb);
+        mCompileAnim = AnimationUtils.loadAnimation(MainMenu.this, R.anim.anim_for_bomb_button);
         mCompileAnim.setDuration(GameSettings.ANIMATION_OPEN_BUTTON_DURATION);
         mCompileAnim.setAnimationListener(new Animation.AnimationListener() {
             @Override
