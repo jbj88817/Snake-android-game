@@ -9,6 +9,9 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class ClassicSnake extends AppCompatActivity {
@@ -32,8 +35,15 @@ public class ClassicSnake extends AppCompatActivity {
     private boolean clickDown;
     private boolean clickUp;
 
+    private ImageView btnRight, btnLeft, btnDown, btnUp;
+
+    private boolean useButtons;
+    private int playerScore;
+    private boolean gameOver = false;
+
     public static final String KEY_SNAKE_PREFERENCES = "SnakePreferences";
     public static final String KEY_PLAY_MUSIC = "PlayMusic";
+    public static final String KEY_USE_BUTTON_CONTROLS = "UseButtonControls";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,4 +164,93 @@ public class ClassicSnake extends AppCompatActivity {
             clickUp = true;
         }
     }
+
+    private void buttonsDirectionInit() {
+        btnRight = (ImageView) findViewById(R.id.btn_right);
+        btnLeft = (ImageView) findViewById(R.id.btn_left);
+        btnDown = (ImageView) findViewById(R.id.btn_down);
+        btnUp = (ImageView) findViewById(R.id.btn_up);
+
+        btnRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickRight();
+            }
+        });
+
+        btnLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickLeft();
+            }
+        });
+
+        btnUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickUp();
+            }
+        });
+
+        btnDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickDown();
+            }
+        });
+
+
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences(KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
+        useButtons = preferences.getBoolean(KEY_USE_BUTTON_CONTROLS, true);
+        if (useButtons) {
+            btnRight.setVisibility(View.VISIBLE);
+            btnLeft.setVisibility(View.VISIBLE);
+            btnDown.setVisibility(View.VISIBLE);
+            btnUp.setVisibility(View.VISIBLE);
+        } else {
+            btnRight.setVisibility(View.INVISIBLE);
+            btnLeft.setVisibility(View.INVISIBLE);
+            btnDown.setVisibility(View.INVISIBLE);
+            btnUp.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    private void shake() {
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        shake.setDuration(GameSettings.SHAKE_DURATION);
+        classicSnakeLayout = (RelativeLayout) findViewById(R.id.classic_snake_layout);
+        classicSnakeLayout.setBackgroundResource(R.mipmap.background_for_snake);
+        classicSnakeLayout.startAnimation(shake);
+    }
+
+    private void fadeAnim() {
+        if (playerScore % GameSettings.POINT_ANIMATION == 0) {
+            Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+            classicSnakeLayout = (RelativeLayout) findViewById(R.id.classic_snake_layout);
+            classicSnakeLayout.setBackgroundResource(R.mipmap.background_for_snake_change);
+            classicSnakeLayout.startAnimation(fadeIn);
+            fadeIn.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Animation fadeOut = AnimationUtils.loadAnimation(ClassicSnake.this, R.anim.fade_out);
+                    classicSnakeLayout = (RelativeLayout) findViewById(R.id.classic_snake_layout);
+                    classicSnakeLayout.setBackgroundResource(R.mipmap.background_for_snake);
+                    classicSnakeLayout.startAnimation(fadeOut);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+        }
+    }
+
 }
