@@ -253,4 +253,16 @@ public class ClassicSnake extends AppCompatActivity {
         }
     }
 
+    private void collide() {
+        ImageView snakeHead = new ImageView(this);
+        gameOver = true;
+        SharedPreferences preferences = getApplicationContext()
+                .getSharedPreferences(KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("Score", playerScore);
+        editor.commit();
+//        Intent intentScore = new Intent(ClassicSnake.this, ClassicScore.class);
+//        intentScore.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//        startActivity(intentScore);
+    }
 }
