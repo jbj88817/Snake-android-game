@@ -1,6 +1,7 @@
 package com.bojie.snake_android_game;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,7 +13,11 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class ClassicSnake extends AppCompatActivity {
 
@@ -40,6 +45,10 @@ public class ClassicSnake extends AppCompatActivity {
     private boolean useButtons;
     private int playerScore;
     private boolean gameOver = false;
+    private ArrayList<ImageView> parts;
+    private int screenHeight, screenWidth;
+    private ArrayList<ImageView> points;
+    private boolean isCollide = false;
 
     public static final String KEY_SNAKE_PREFERENCES = "SnakePreferences";
     public static final String KEY_PLAY_MUSIC = "PlayMusic";
@@ -261,8 +270,48 @@ public class ClassicSnake extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("Score", playerScore);
         editor.commit();
-//        Intent intentScore = new Intent(ClassicSnake.this, ClassicScore.class);
-//        intentScore.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//        startActivity(intentScore);
+        Intent intentScore = new Intent(ClassicSnake.this, ClassicScore.class);
+        intentScore.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(intentScore);
+    }
+
+    private void checkBitten() {
+        ImageView snakeHead = parts.get(0);
+        ImageView snakeTile = new ImageView(this);
+
+        for (int i = 1; i < parts.size(); i++) {
+            snakeTile = parts.get(i);
+            if (snakeHead.getX() == snakeTile.getX() && snakeHead.getY() == snakeTile.getY()) {
+                collide();
+                break;
+            }
+        }
+    }
+
+    private void addTail() {
+        RelativeLayout snakeLayout = (RelativeLayout) findViewById(R.id.snake_layout);
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(R.mipmap.head);
+        LinearLayout.LayoutParams layoutParams = new
+                LinearLayout.LayoutParams((screenWidth * 20) / 450, (screenHeight * 30) / 450);
+        imageView.setLayoutParams(layoutParams);
+        snakeLayout.addView(imageView);
+        parts.add(imageView);
+    }
+
+    private void setNewPoint() {
+        Random random = new Random();
+        ImageView newPoint = new ImageView(ClassicSnake.this);
+        float x = random.nextFloat() * (screenWidth - newPoint.getWidth());
+        float y = random.nextFloat() * (screenHeight - newPoint.getHeight());
+        newPoint.setImageResource(R.mipmap.food);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                ((screenWidth * 20) / 450), ((screenHeight * 30) / 450));
+        newPoint.setLayoutParams(layoutParams);
+        newPoint.setX(x);
+        newPoint.setY(y);
+        isCollide = false;
+        classicSnakeLayout.addView(newPoint);
+        points.add(points.size(), newPoint);
     }
 }
