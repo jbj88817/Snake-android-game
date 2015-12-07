@@ -399,7 +399,7 @@ public class ClassicSnake extends AppCompatActivity {
                                         } else {
                                             imageView.setX(imageView.getX() + speedX);
                                             if (imageView.getX() + imageView.getWidth() >= screenWidth) {
-                                                imageView.setX(screenWidth - imageView.getWidth() /2);
+                                                imageView.setX(screenWidth - imageView.getWidth() / 2);
                                                 collide();
                                             }
                                         }
@@ -428,8 +428,8 @@ public class ClassicSnake extends AppCompatActivity {
                                             imageView.setY(imageView2.getY());
                                         } else {
                                             imageView.setY(imageView.getY() + speedY);
-                                            if (imageView.getY() + imageView.getHeight() >= screenHeight ) {
-                                                imageView.setY(screenHeight - imageView.getHeight() /2);
+                                            if (imageView.getY() + imageView.getHeight() >= screenHeight) {
+                                                imageView.setY(screenHeight - imageView.getHeight() / 2);
                                                 collide();
                                             }
                                         }
@@ -458,5 +458,47 @@ public class ClassicSnake extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+
+    public class SwipeGestureDirector extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            boolean result = false;
+            if (!useButtons) {
+                try {
+                    float diffX = e2.getX() - e1.getX();
+                    float diffY = e2.getY() - e1.getY();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > GameSettings.SWIPE_THRESH_HOLD
+                                && Math.abs(velocityX) > GameSettings.SWIPE_VELOCITY_THRESH_HOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                        }
+                        result = true;
+                    } else if (Math.abs(diffY) > GameSettings.SWIPE_THRESH_HOLD
+                            && Math.abs(velocityY) > GameSettings.SWIPE_VELOCITY_THRESH_HOLD) {
+                        if (diffY > 0) {
+                            onSwipeDown();
+                        } else {
+                            onSwipeUp();
+                        }
+                        result = true;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+            return result;
+        }
     }
 }
