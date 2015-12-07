@@ -3,8 +3,10 @@ package com.bojie.snake_android_game;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -15,6 +17,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -41,6 +44,7 @@ public class ClassicSnake extends AppCompatActivity {
     private boolean clickUp;
 
     private ImageView btnRight, btnLeft, btnDown, btnUp;
+    private TextView textScore;
 
     private boolean useButtons;
     private int playerScore;
@@ -49,6 +53,9 @@ public class ClassicSnake extends AppCompatActivity {
     private int screenHeight, screenWidth;
     private ArrayList<ImageView> points;
     private boolean isCollide = false;
+    private Handler myHandle;
+    private ImageView head;
+
 
     public static final String KEY_SNAKE_PREFERENCES = "SnakePreferences";
     public static final String KEY_PLAY_MUSIC = "PlayMusic";
@@ -72,6 +79,7 @@ public class ClassicSnake extends AppCompatActivity {
         classicSnakeLayout.setPaddingRelative(GameSettings.LAYOUT_PADDING, GameSettings.LAYOUT_PADDING,
                 GameSettings.LAYOUT_PADDING, GameSettings.LAYOUT_PADDING);
         isInitialized = false;
+        textScore = (TextView) findViewById(R.id.)
     }
 
     private void musicOnOff() {
@@ -313,5 +321,78 @@ public class ClassicSnake extends AppCompatActivity {
         isCollide = false;
         classicSnakeLayout.addView(newPoint);
         points.add(points.size(), newPoint);
+    }
+
+    private void setFoodPoints() {
+        for (int i = 0; i < GameSettings.FOOT_POINTS; i++) {
+            Random rand = new Random();
+            ImageView foodItem = new ImageView(this);
+            float x = rand.nextFloat() * (screenWidth - foodItem.getWidth());
+            float y = rand.nextFloat() * (screenHeight - foodItem.getWidth());
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                    ((screenWidth * 20) / 450), ((screenHeight * 30) / 450));
+            foodItem.setImageResource(R.mipmap.food);
+            foodItem.setLayoutParams(layoutParams);
+            foodItem.setX(x);
+            foodItem.setY(y);
+            classicSnakeLayout.addView(foodItem);
+            points.add(i, foodItem);
+        }
+    }
+
+    private void update() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!gameOver && !isPaused) {
+                    try {
+                        Thread.sleep(GameSettings.GAME_THREAD);
+                        myHandle.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                float left = head.getX() - head.getWidth();
+                                float top = head.getY() - head.getHeight();
+                                float right = head.getX() + head.getWidth();
+                                float bottom = head.getY() + head.getHeight();
+
+                                for (int i = 0; i < points.size(); i++) {
+                                    if (!isCollide) {
+                                        ImageView p = points.get(i);
+                                        float left1 = p.getX() - p.getWidth();
+                                        float top1 = p.getY() - p.getHeight();
+                                        float right1 = p.getX() + p.getWidth();
+                                        float bottom1 = p.getY() + p.getHeight();
+
+                                        // Player
+                                        Rect rc1 = new Rect();
+                                        rc1.set((int) left, (int) top, (int) right, (int) bottom);
+                                        //Food Item
+                                        Rect rc2 = new Rect();
+                                        rc2.set((int) left1, (int) top1, (int) right1, (int) bottom1);
+
+                                        p.getHitRect(rc2);
+                                        if (Rect.intersects(rc1, rc2)) {
+                                            classicSnakeLayout.removeView(p);
+                                            points.remove(i);
+                                            playerScore++;
+                                            isCollide = true;
+                                            textScore.setText("Score: " + playerScore);
+                                            setNewPoint();
+                                            addTail();
+                                            shake();
+                                            fadeAnim();
+                                        }
+                                        checkBitten();
+                                    }
+                                }
+                                isCollide = false;
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        }).start();
     }
 }
