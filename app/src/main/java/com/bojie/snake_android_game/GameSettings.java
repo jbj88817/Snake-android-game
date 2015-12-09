@@ -27,6 +27,10 @@ public final class GameSettings {
     public static final int SWIPE_THRESH_HOLD = 100;
     public static final int SWIPE_VELOCITY_THRESH_HOLD = 100;
     public static final int LAYOUT_PADDING = 0;
-
     public static final int LAYOUT_MARGIN = 0;
+
+    public static final String KEY_SNAKE_PREFERENCES = "SnakePreferences";
+    public static final String KEY_PLAY_MUSIC = "PlayMusic";
+    public static final String KEY_USE_BUTTON_CONTROLS = "UseButtonControls";
+
 }

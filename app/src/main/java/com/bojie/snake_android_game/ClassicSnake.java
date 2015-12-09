@@ -62,10 +62,6 @@ public class ClassicSnake extends AppCompatActivity {
     private int speedY = 17;
 
 
-    public static final String KEY_SNAKE_PREFERENCES = "SnakePreferences";
-    public static final String KEY_PLAY_MUSIC = "PlayMusic";
-    public static final String KEY_USE_BUTTON_CONTROLS = "UseButtonControls";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,8 +86,8 @@ public class ClassicSnake extends AppCompatActivity {
 
     private void musicOnOff() {
         SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences(KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
-        mPlayMusic = preferences.getBoolean(KEY_PLAY_MUSIC, true);
+                .getSharedPreferences(GameSettings.KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
+        mPlayMusic = preferences.getBoolean(GameSettings.KEY_PLAY_MUSIC, true);
         mMusicPlayer = MediaPlayer.create(ClassicSnake.this, R.raw.music);
         if (mPlayMusic) {
             mMusicPlayer.setLooping(true);
@@ -224,8 +220,8 @@ public class ClassicSnake extends AppCompatActivity {
 
 
         SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences(KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
-        useButtons = preferences.getBoolean(KEY_USE_BUTTON_CONTROLS, true);
+                .getSharedPreferences(GameSettings.KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
+        useButtons = preferences.getBoolean(GameSettings.KEY_USE_BUTTON_CONTROLS, true);
         if (useButtons) {
             btnRight.setVisibility(View.VISIBLE);
             btnLeft.setVisibility(View.VISIBLE);
@@ -280,7 +276,7 @@ public class ClassicSnake extends AppCompatActivity {
         ImageView snakeHead = new ImageView(this);
         gameOver = true;
         SharedPreferences preferences = getApplicationContext()
-                .getSharedPreferences(KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
+                .getSharedPreferences(GameSettings.KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt("Score", playerScore);
         editor.commit();
