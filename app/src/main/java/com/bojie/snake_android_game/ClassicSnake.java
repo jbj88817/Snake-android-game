@@ -112,8 +112,8 @@ public class ClassicSnake extends AppCompatActivity {
         mMusicPlayer.release();
     }
 
-    public void onSwipeRight() {
-        if (isGoingRight && isGoingLeft) {
+    private void onSwipeRight() {
+        if (!isGoingRight && !isGoingLeft) {
             isGoingRight = true;
             isGoingLeft = false;
             isGoingDown = false;
@@ -121,8 +121,8 @@ public class ClassicSnake extends AppCompatActivity {
         }
     }
 
-    public void onSwipeLeft() {
-        if (isGoingRight && isGoingLeft) {
+    private void onSwipeLeft() {
+        if (!isGoingRight && !isGoingLeft) {
             isGoingRight = false;
             isGoingLeft = true;
             isGoingDown = false;
@@ -130,8 +130,8 @@ public class ClassicSnake extends AppCompatActivity {
         }
     }
 
-    public void onSwipeDown() {
-        if (isGoingUp && isGoingDown) {
+    private void onSwipeDown() {
+        if (!isGoingUp && !isGoingDown) {
             isGoingRight = false;
             isGoingLeft = false;
             isGoingDown = true;
@@ -139,8 +139,8 @@ public class ClassicSnake extends AppCompatActivity {
         }
     }
 
-    public void onSwipeUp() {
-        if (isGoingDown && isGoingUp) {
+    private void onSwipeUp() {
+        if (!isGoingDown && !isGoingUp) {
             isGoingRight = false;
             isGoingLeft = false;
             isGoingDown = false;
@@ -149,7 +149,7 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void clickRight() {
-        if (clickRight && clickLeft) {
+        if (!clickRight && !clickLeft) {
             clickRight = true;
             clickLeft = false;
             clickDown = false;
@@ -158,7 +158,7 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void clickLeft() {
-        if (clickRight && clickLeft) {
+        if (!clickRight && !clickLeft) {
             clickRight = false;
             clickLeft = true;
             clickDown = false;
@@ -167,7 +167,7 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void clickDown() {
-        if (clickDown && clickUp) {
+        if (!clickDown && !clickUp) {
             clickRight = false;
             clickLeft = false;
             clickDown = true;
@@ -176,7 +176,7 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void clickUp() {
-        if (clickDown && clickUp) {
+        if (!clickDown && !clickUp) {
             clickRight = false;
             clickLeft = false;
             clickDown = false;
@@ -245,7 +245,7 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void fadeAnim() {
-        if (playerScore % GameSettings.POINT_ANIMATION == 0) {
+        if (playerScore % GameSettings.POINTS_ANIMATION == 0) {
             Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
             classicSnakeLayout = (RelativeLayout) findViewById(R.id.classic_snake_layout);
             classicSnakeLayout.setBackgroundResource(R.mipmap.background_for_snake_change);
@@ -273,7 +273,6 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void collide() {
-        ImageView snakeHead = new ImageView(this);
         gameOver = true;
         SharedPreferences preferences = getApplicationContext()
                 .getSharedPreferences(GameSettings.KEY_SNAKE_PREFERENCES, Context.MODE_PRIVATE);
@@ -299,13 +298,12 @@ public class ClassicSnake extends AppCompatActivity {
     }
 
     private void addTail() {
-        RelativeLayout snakeLayout = (RelativeLayout) findViewById(R.id.snake_layout);
         ImageView imageView = new ImageView(this);
         imageView.setImageResource(R.mipmap.head);
         LinearLayout.LayoutParams layoutParams = new
                 LinearLayout.LayoutParams((screenWidth * 20) / 450, (screenHeight * 30) / 450);
         imageView.setLayoutParams(layoutParams);
-        snakeLayout.addView(imageView);
+        classicSnakeLayout.addView(imageView);
         parts.add(imageView);
     }
 
@@ -330,7 +328,7 @@ public class ClassicSnake extends AppCompatActivity {
             Random rand = new Random();
             ImageView foodItem = new ImageView(this);
             float x = rand.nextFloat() * (screenWidth - foodItem.getWidth());
-            float y = rand.nextFloat() * (screenHeight - foodItem.getWidth());
+            float y = rand.nextFloat() * (screenHeight - foodItem.getHeight());
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                     ((screenWidth * 20) / 450), ((screenHeight * 30) / 450));
             foodItem.setImageResource(R.mipmap.food);
@@ -441,9 +439,9 @@ public class ClassicSnake extends AppCompatActivity {
                                             imageView.setX(imageView2.getX());
                                             imageView.setY(imageView2.getY());
                                         } else {
-                                            imageView.setX(imageView.getY() - speedY);
+                                            imageView.setY(imageView.getY() - speedY);
                                             if (imageView.getY() <= 0) {
-                                                imageView.setX(0);
+                                                imageView.setY(0);
                                                 collide();
                                             }
                                         }
@@ -539,7 +537,6 @@ public class ClassicSnake extends AppCompatActivity {
                 isPaused = false;
                 update();
             }
-
             super.onWindowFocusChanged(hasFocus);
         }
     }

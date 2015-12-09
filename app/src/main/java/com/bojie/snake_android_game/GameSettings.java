@@ -8,7 +8,7 @@ public final class GameSettings {
     public static final int FOOT_POINTS = 3;
     public static final int NUMBER_POINTS = 20;
     public static final int POINTS_BOMB_ANIMATION = 15;
-    public static final int POINT_ANIMATION = 4;
+    public static final int POINTS_ANIMATION = 4;
     public static final int POISON_FOOD = 5;
     public static final String MY_AD_UNIT_ID = "TBA";
 
