@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -19,7 +21,7 @@ public class ClassicScore extends AppCompatActivity {
     private Animation mAnimation;
     private TextView mHighScoreTextView;
     private ImageView playAgainImageView;
-    private TextView playAgainTextView;
+    private ImageView mainMenuImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +133,95 @@ public class ClassicScore extends AppCompatActivity {
 
         playAgainImageView.startAnimation(mAnimation);
 
+    }
+
+    private void initMainMenu() {
+        mainMenuImageView = (ImageView) findViewById(R.id.goto_main_menu);
+        mAnimation = AnimationUtils.loadAnimation(ClassicSnake.this, R.anim.anim_for_bomb_button);
+        mAnimation.setDuration(GameSettings.ANIMATION_OPEN_BUTTON_DURATION);
+        mAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mainMenuImageView.setImageResource(R.mipmap.menu);
+                mainMenuImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        scoreTextView.setBackgroundResource(R.mipmap.menu_options);
+                        scoreTextView.setText("");
+                        scoreTextView.setTextColor(Color.BLACK);
+                        mHighScoreTextView.setBackgroundResource(R.mipmap.menu_options);
+                        mHighScoreTextView.setText("");
+                        mHighScoreTextView.setTextColor(Color.BLACK);
+
+                        playAgainImageView.setBackgroundResource(R.mipmap.menu_options);
+                        mainMenuImageView.setBackgroundResource(R.mipmap.menu_options);
+
+                        // Reverse animate
+                        Animation animationScore = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.reverse_for_classic_button);
+                        animationScore.setDuration(GameSettings.ANIMATION_CLOSE_BUTTON_DURATION);
+
+                        Animation animationHighScore = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.reverse_for_no_button);
+                        animationScore.setDuration(GameSettings.ANIMATION_CLOSE_BUTTON_DURATION);
+
+                        Animation animationPlayAgain = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.reverse_for_settings_button);
+                        animationScore.setDuration(GameSettings.ANIMATION_CLOSE_BUTTON_DURATION);
+
+                        Animation animationMainMenu = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.reverse_for_bomb_button);
+                        animationScore.setDuration(GameSettings.ANIMATION_CLOSE_BUTTON_DURATION);
+
+                        Animation animationTitleLeft = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.anim_for_title_left);
+                        animationScore.setDuration(GameSettings.ANIMATION_SHOW_TITLE_DURATION);
+
+                        Animation animationTitleMiddle = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.anim_for_title_middle);
+                        animationScore.setDuration(GameSettings.ANIMATION_SHOW_TITLE_DURATION);
+
+                        Animation animationTitleRight = AnimationUtils.loadAnimation(ClassicScore.this,
+                                R.anim.anim_for_title_right);
+                        animationScore.setDuration(GameSettings.ANIMATION_SHOW_TITLE_DURATION);
+
+                        TextView gameOverTitleLeftTextView = (TextView) findViewById(R.id.gameover_left);
+                        TextView gameOverTitleMiddleTextView = (TextView) findViewById(R.id.gameover_middle);
+                        TextView gameOverTitleRightTextView = (TextView) findViewById(R.id.gameover_right);
+
+                        scoreTextView.startAnimation(animationScore);
+                        mHighScoreTextView.startAnimation(animationHighScore);
+                        playAgainImageView.startAnimation(animationPlayAgain);
+                        mainMenuImageView.startAnimation(animationMainMenu);
+                        gameOverTitleLeftTextView.startAnimation(animationTitleLeft);
+                        gameOverTitleMiddleTextView.startAnimation(animationTitleMiddle);
+                        gameOverTitleRightTextView.startAnimation(animationTitleRight);
+
+                        Handler myHander = new Handler();
+                        myHander.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intentMain = new Intent(ClassicScore.this, MainMenu.class);
+                                intentMain.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                                startActivity(intentMain);
+                            }
+                        }, GameSettings.START_NEW_ACTIVITY_DURATION);
+                    }
+                });
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
 }
